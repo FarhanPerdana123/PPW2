@@ -14,6 +14,18 @@ use App\Http\Controllers\Auth\LoginRegisterController;
 |
 */
 
+Route::get('/', function(){
+    return view('welcome');
+}) ->name('welcome');
+
+Route::get('restricted', function () {
+    return "Anda berusia lebih dari 18 tahun!";
+})->middleware('checkage');
+
+Route::get('admin', function () {
+    return "Anda adalah Admin";
+})->middleware('admin');
+
 Route::controller(LoginRegisterController::class)->group(function () {
     Route::get('/register', 'register')->name('register');
     Route::post('/store', 'store')->name('store');
@@ -21,4 +33,9 @@ Route::controller(LoginRegisterController::class)->group(function () {
     Route::post('/authenticate', 'authenticate')->name('authenticate');
     Route::get('/dashboard', 'dashboard')->name('dashboard');
     Route::post('/logout', 'logout')->name('logout');
+});
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/dashboard', [LoginRegisterController::class, 'dashboard'])->name('dashboard');
+    Route::post('/logout', [LoginRegisterController::class, 'logout'])->name('logout');
 });
