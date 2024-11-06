@@ -1,6 +1,7 @@
 @extends('auth.layouts')
 
 @section('content')
+<link rel="stylesheet" href="{{asset('css/bootstrap.min.css')}}">
 
 <div class="row justify-content-center mt-5">
     <div class="col-md-8">
@@ -8,8 +9,17 @@
             <div class="card-header">Dashboard</div>
             <div class="card-body">
                 @if ($message = Session::get('success'))
+                    <div class="alert alert-success">
+                        {{ $message }}
+                    </div>
+                @else
+                    <div class="alert alert-success">
+                        You are logged in!
+                    </div>
+                @endif
+                @if (Session::has('noAdmin'))
                 <div class="alert alert-success">
-                    {{ $message }}
+                    {{ Session::get('noAdmin') }}
                 </div>
                 @endif
             </div>

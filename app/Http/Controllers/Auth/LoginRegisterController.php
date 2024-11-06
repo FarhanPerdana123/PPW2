@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illminate\Support\Facades\Storage;
 
 class LoginRegisterController extends Controller
 {
@@ -25,13 +26,27 @@ class LoginRegisterController extends Controller
         $request->validate([
             'name' => 'required|string|max:250',
             'email' => 'required|email|max:250|unique:users',
-            'password' => 'required|min:8|confirmed'
+            'role' => 'required',
+            'password' => 'required|min:8|confirmed',
+            'photo' => 'image|nullable|max:1999'
         ]);
+
+        if($request->hasFile('photo')){
+            $fileNameWithExt = $request->file('photo')->getClientOriginalName();
+            $fileName = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
+            $extension = $request->file('photo')->getClientOriginalExtension();
+            $fileNameToStore = $fileName.'_'.time().'.'.$extension;
+            $path = $request->file('photo')->storeAs('public/photos', $fileNameToStore);
+        } else {
+            // tidak ada file yang diupload
+        }
 
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password)
+            'role' => $request->role,
+            'password' => Hash::make($request->password),
+            'photo' => $path
         ]);
 
         $credentials = $request->only('email', 'password');
@@ -69,6 +84,11 @@ class LoginRegisterController extends Controller
         return redirect()->route('login')->withErrors([
             'email' => 'Please login to access the dashboard.',
         ])->onlyInput('email');
+    }
+
+    public function admin()
+    {
+        return view('auth.admin');
     }
 
     public function logout(Request $request){

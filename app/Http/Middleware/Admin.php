@@ -25,13 +25,10 @@ class Admin
 
     public function handle(Request $request, Closure $next): Response
     {
-        // Cek apakah pengguna sudah login dan memiliki role 'admin'
-        if (Auth::check() && Auth::user()->level !== 'admin') {
-            return redirect()->route('welcome')
-                ->with('error', 'Anda bukan Admin');
+        if (Auth::check() && Auth::user()->role === 'User') {
+            return redirect()->route('dashboard')
+            ->with ('noAdmin','Anda tidak diperbolehkan ke halaman admin');
         }
-
-        // Jika pengguna adalah admin, lanjutkan permintaan
         return $next($request);
     }
 }
