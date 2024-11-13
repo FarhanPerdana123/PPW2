@@ -27,24 +27,6 @@
                         </div>
                     </div>
                     <div class="mb-3 row">
-                        <label for="role" class="col-md-4 col-form-label text-md-end text-start">Role</label>
-                        <div class="col-md-6">
-                            <select class="form-select" id="role" name="role">
-                                <option value="admin">Admin</option>
-                                <option value="user">User</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label for="photo" class="col-md-4 col-form-label text-md-end text-start">Photo</label>
-                        <div class="col-md-6">
-                            <input type="file" class="form-control @error('photo') is-invalid @enderror" id="photo" name="photo">
-                            @if ($errors->has('photo'))
-                                <span class="text-danger">{{ $errors->first('photo') }}</span>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
                         <label for="password" class="col-md-4 col-form-label text-md-end text-start">Password</label>
                         <div class="col-md-6">
                             <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password">
@@ -57,6 +39,15 @@
                         <label for="password_confirmation" class="col-md-4 col-form-label text-md-end text-start">Confirm Password</label>
                         <div class="col-md-6">
                             <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="photo" class="col-md-4 col-form-label text-md-end text-start">Photo</label>
+                        <div class="col-md-6">
+                            <input type="file" class="form-control @error('photo') is-invalid @enderror" name="photo" id="photo" value="{{ old('photo') }}">
+                            @if ($errors->has('photo'))
+                            <span class="text-danger"> {{ $errors->first('photo') }} </span>
+                            @endif
                         </div>
                     </div>
                     <div class="mb-3 row">

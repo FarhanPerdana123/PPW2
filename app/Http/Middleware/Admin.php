@@ -25,9 +25,8 @@ class Admin
 
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->role === 'User') {
-            return redirect()->route('dashboard')
-            ->with ('noAdmin','Anda tidak diperbolehkan ke halaman admin');
+        if(auth()->user() && auth()->user()->level !== 'admin'){
+            return redirect('/dashboard')->with('error','Anda Tidak memiliki akses ke halaman admin');
         }
         return $next($request);
     }
