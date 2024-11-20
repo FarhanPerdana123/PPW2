@@ -29,29 +29,35 @@ class LoginRegisterController extends Controller
             'password' => 'required|min:8|confirmed',
             'photo' => 'image|nullable|max:1999'
         ]);
-    
-        $path = null; // Define $path with a default value
-    
+
         if($request->hasFile('photo')){
             $filenameWithExt = $request->file('photo')->getClientOriginalName();
             $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
             $extension = $request->file('photo')->getClientOriginalExtension();
-            $filenameSimpan = $filename . '_' . time() . '.' . $extension; // Add a dot before the extension
+            $filenameSimpan = $filename . '_' . time() . $extension;
             $path = $request->file('photo')->storeAs('photos', $filenameSimpan);
         }
-    
-        User::create([
+
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'photo' => $path
+            'photo' => $path    
         ]);
-    
+
+        $data = [
+            'name' => $user->name,
+            'email' => $user->email,
+            'subject' => 'New User has been registed',
+            'body' => "Pengguna baru telah terdaftar.\nNama: {$user->name}\nEmail: {$user->email}"
+        ];
+        dispatch(new \App\Jobs\SendMailJob($data));
+
         $credentials = $request->only('email', 'password');
         Auth::attempt($credentials);
         $request->session()->regenerate();
-        return redirect()->route('dashboard')->withSuccess('You have successfully registered & logged in!');
-    }    
+        return redirect()->route('dashboard')->withSuccess('you have succesfully registered & logged in!');
+    }
 
     public function login(){
         return view('auth.login');
