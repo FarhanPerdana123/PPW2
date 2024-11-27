@@ -7,7 +7,6 @@ use App\Models\Post;
 use Illuminate\Support\Facades\Storage;
 
 
-
 class GalleryController extends Controller
 {
     /**
@@ -133,4 +132,50 @@ class GalleryController extends Controller
 
         return redirect('gallery')->with('success', 'Image deleted successfully');
     }
+
+
+    /**
+     * @OA\Get(
+     *     path="/api/galleries",
+     *     tags={"Galleries"},
+     *     summary="Get list of galleries",
+     *     description="Returns a paginated list of galleries",
+     *     @OA\Response(
+     *         response=200,
+     *         description="A list of galleries",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="current_page", type="integer"),
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/Gallery")
+     *             ),
+     *             @OA\Property(property="last_page", type="integer"),
+     *             @OA\Property(property="total", type="integer"),
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Not Found"),
+     * )
+     */
+
+
+    public function apiIndex()
+    {
+        $galleries = Post::where('picture', '!=', '')->whereNotNull('picture')->orderBy('created_at', 'desc')->paginate(30);
+
+        return response()->json($galleries);
+    }
+
+    /**
+     * @OA\Schema(
+     *     schema="Gallery",
+     *     type="object",
+     *     @OA\Property(property="id", type="integer"),
+     *     @OA\Property(property="title", type="string"),
+     *     @OA\Property(property="description", type="string"),
+     *     @OA\Property(property="picture", type="string"),
+     *     @OA\Property(property="created_at", type="string", format="date-time"),
+     *     @OA\Property(property="updated_at", type="string", format="date-time"),
+     * )
+     */
+
 }
